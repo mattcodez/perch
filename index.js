@@ -23,7 +23,7 @@ const config = Object.freeze({
 
   userUnits:             'F', //'F' or 'C', units the user will see/set with
 
-  thermometerFilePath:   '/sys/devices/w1_bus_master1/28-002720120204',
+  thermometerFilePath:   '/sys/devices/w1_bus_master1/28-002720120204/w1_slave',
                               //file path string - location of device file
                               //for reading the temperature
 
@@ -35,16 +35,15 @@ const config = Object.freeze({
 let currentTempRead;  //Global to hold the current termperature read from
                       //the device file
 
-function async getAndSetTemperature(){
-  try{
-    const content = await fs.readFile(config.thermometerFilePath);
+function getAndSetTemperature(){
+  fs.readFileAsync(config.thermometerFilePath).then(content => {
     currentTempRead = content.substr(content.lastIndexOf('t=') + 2) / 1000;
     DEBUG_MODE && console.log(`currentTempRead set to ${currentTempRead}`);
-  }
-  catch(e){
-    //TODO:stop everything
-    console.error(e);
-  }
+  }).catch(err => {
+    console.error("Error reading thermometer file path");
+    DEBUG_MODE && console.error(err);
+    clearInterval(readInterval);
+  });
 }
 //Continuously poll
 const readInterval = setInterval(getAndSetTemperature, config.filePollRate);
