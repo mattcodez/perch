@@ -1,4 +1,6 @@
 #11-27-16:
+*Start working as if relay-exp-addon works locally.
+#11-27-16:
 *Read working, start on relay changes based on temp.
 #11-24-16:
 *content.substr is not a function

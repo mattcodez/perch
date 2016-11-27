@@ -1,8 +1,23 @@
 'use strict';
+const DEBUG_MODE = true; //TODO: default to false and set through cmd/env
+
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
 
-const DEBUG_MODE = true; //TODO: default to false and set through cmd/env
+let relayAddon;
+try{
+  relayAddon = require("/usr/bin/relay-exp-addon");
+}
+catch(e){
+  //We're not on an Omega, fake it
+  console.error('relay-exp-addon not found, faking with no functionality');
+  relayAddon = new Proxy({}, {
+    get(target, name, receiver) {
+      DEBUG_MODE && console.log(`Trying to run relayAddon.${name}`);
+      return ()=>{};
+    }
+  });
+}
 
 //consider this unchangeable during program run
 //TODO import from it's own file
