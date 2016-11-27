@@ -1,3 +1,5 @@
+#11-27-16:
+*Read working, start on relay changes based on temp.
 #11-24-16:
 *content.substr is not a function
 #11-23-16:

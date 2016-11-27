@@ -36,7 +36,7 @@ let currentTempRead;  //Global to hold the current termperature read from
                       //the device file
 
 function getAndSetTemperature(){
-  fs.readFileAsync(config.thermometerFilePath).then(content => {
+  fs.readFileAsync(config.thermometerFilePath, 'utf8').then(content => {
     currentTempRead = content.substr(content.lastIndexOf('t=') + 2) / 1000;
     DEBUG_MODE && console.log(`currentTempRead set to ${currentTempRead}`);
   }).catch(err => {
