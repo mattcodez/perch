@@ -24,3 +24,18 @@ function getAndSetTemperature(){
 }
 //Continuously poll
 const tempFileReadInterval = setInterval(getAndSetTemperature, config.filePollRate);
+
+let tempTarget = 21;
+let HVACMode = 'heat';
+const HVACRelayMap = object.freeze({
+  heat: 0,
+  cool: 1
+});
+
+function monitorTempForAction(){
+  if (HVACMode === 'heat'){
+    const currentTempDiff = currentTempRead - tempTarget;
+    //config.cycleTempChange;
+  }
+}
+const monitorTempInterval = setInterval(monitorTempForAction, config.filePollRate);
