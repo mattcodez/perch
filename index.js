@@ -34,8 +34,18 @@ const HVACRelayMap = object.freeze({
 
 function monitorTempForAction(){
   if (HVACMode === 'heat'){
+    /*We divide cycleTempChange by 2 because we let the temp fall half that from
+    the target and then raise it fully so that we're half above the target*/
     const currentTempDiff = currentTempRead - tempTarget;
-    //config.cycleTempChange;
+    if (currentTempDiff > (config.cycleTempChange / 2)){
+      if (heatIsOn()){
+
+      }
+    }
   }
 }
 const monitorTempInterval = setInterval(monitorTempForAction, config.filePollRate);
+
+/*Was thinking about storing system status in a variable but there's always a
+chance it could get out of sync, instead, just check the array directly*/
+//class or object?
