@@ -9,6 +9,34 @@ const fs = Promise.promisifyAll(require('fs'));
 const config = require('./config.js');
 const relay = require('./relay.js');
 
+const SYSTEM = object.freeze({
+  heat: {
+    on: false,
+    relayId: 0,
+    turnOn:
+  },
+  cool: {
+    on: false,
+    relayId: 1
+  },
+  turnOn(){//needs to only allow one on at a time.
+    this.on = true;
+  }
+});
+
+//vs
+class HVAC {
+//  turnOn
+}
+class _SYSTEM {
+
+}
+
+//TODO: need safety check in case this script keeps rebooting
+//maybe force a two minute wait on boot, or, track on/off in file or
+//simple database and if there are multiple on's in the last few minutes,
+//just disable and alert user.
+
 let currentTempRead;  //Global to hold the current termperature read from
                       //the device file
 
@@ -27,10 +55,6 @@ const tempFileReadInterval = setInterval(getAndSetTemperature, config.filePollRa
 
 let tempTarget = 21;
 let HVACMode = 'heat';
-const HVACRelayMap = object.freeze({
-  heat: 0,
-  cool: 1
-});
 
 function monitorTempForAction(){
   if (HVACMode === 'heat'){

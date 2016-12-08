@@ -1,3 +1,7 @@
+#12-7-16:
+*Relay API for Node doesn't have a method to read relay status, need to track
+  in application.
+*Class or object for SYSTEM?
 #11-29-16:
 *Should a class or obj literal be used for system{} data?
   Depends if I want to do fancy function stuff like .heat.on(),
