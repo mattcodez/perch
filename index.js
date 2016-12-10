@@ -107,7 +107,3 @@ function monitorTempForAction(){
   }
 }
 const monitorTempInterval = setInterval(monitorTempForAction, config.filePollRate);
-
-/*Was thinking about storing system status in a variable but there's always a
-chance it could get out of sync, instead, just check the array directly*/
-//class or object?

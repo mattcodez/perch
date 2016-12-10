@@ -1,3 +1,10 @@
+#12-10-16:
+*So, based on below, probably work on API before web GUI
+*Move things to other files before it get's too messy
+*I guess it's time to start working on a GUI: lcd or web first?
+  Do we integrate API server with main back-end? If not, we would need
+  a way to communicate between backends, and HTTP is a likely candidate so
+  why not just do HTTP straight from here?
 #12-7-16:
 *Relay API for Node doesn't have a method to read relay status, need to track
   in application.
