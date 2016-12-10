@@ -9,6 +9,7 @@ const fs = Promise.promisifyAll(require('fs'));
 const config = require('./config.js');
 const SYS_relay = require('./relay.js');
 
+//HVAC_method: for controlling relays on individual modes
 class HVAC_method {
   constructor(SYS_relay, channel, name){
     super();
@@ -47,10 +48,12 @@ class HVAC_method {
   }
 }
 
-const HVAC = object.freeze({
-  heat: new HVAC_method(SYS_relay, 0, 'heat'),
-  cool: new HVAC_method(SYS_relay, 1, 'cool')
-});
+const HVAC = {
+  heat:         new HVAC_method(SYS_relay, 0, 'heat'),
+  cool:         new HVAC_method(SYS_relay, 1, 'cool'),
+  active_mode:  'heat',
+  tempTarget:   21
+};
 
 
 
@@ -58,6 +61,8 @@ const HVAC = object.freeze({
 //maybe force a two minute wait on boot, or, track on/off in file or
 //simple database and if there are multiple on's in the last few minutes,
 //just disable and alert user.
+
+//TODO: everything below could probably go in HVAC at some point
 
 let currentTempRead;  //Global to hold the current termperature read from
                       //the device file
@@ -75,17 +80,28 @@ function getAndSetTemperature(){
 //Continuously poll
 const tempFileReadInterval = setInterval(getAndSetTemperature, config.filePollRate);
 
-let tempTarget = 21;
-let HVACMode = 'heat';
-
+const THERMAL_THRESHOLD = (config.cycleTempChange / 2);
+//monitorTempForAction gets run intervally with no assumptions, everything
+//must be checked by it or a sub function
 function monitorTempForAction(){
-  if (HVACMode === 'heat'){
+  if (HVAC.active_mode === 'heat'){
     /*We divide cycleTempChange by 2 because we let the temp fall half that from
     the target and then raise it fully so that we're half above the target*/
-    const currentTempDiff = currentTempRead - tempTarget;
-    if (currentTempDiff > (config.cycleTempChange / 2)){
-      if (heatIsOn()){
+    const currentTempDiff = currentTempRead - HVAC.tempTarget;
+    //currentTempDiff is positive the room is warmer than the target
+    if (currentTempDiff > THERMAL_THRESHOLD){
+      //if we're warmer by the threshold, time to turn off
+      if (HVAC.heat.on){
+        HVAC.heat.turnOff();
+      }
+      else {
+        //room is warmer than the target but system is off, maybe spring is here
+      }
+    }
 
+    if (currentTempDiff < -THERMAL_THRESHOLD){
+      if (HVAC.heat.off){
+        HVAC.heat.turnOn();
       }
     }
   }
