@@ -7,30 +7,52 @@ const fs = Promise.promisifyAll(require('fs'));
 
 //Custom modules
 const config = require('./config.js');
-const relay = require('./relay.js');
+const SYS_relay = require('./relay.js');
 
-const SYSTEM = object.freeze({
-  heat: {
-    on: false,
-    relayId: 0,
-    turnOn:
-  },
-  cool: {
-    on: false,
-    relayId: 1
-  },
-  turnOn(){//needs to only allow one on at a time.
-    this.on = true;
+class HVAC_method {
+  constructor(SYS_relay, channel, name){
+    super();
+
+    if (!SYS_relay) throw 'relay must be sent to constructor';
+
+    this._channel = channel;
+    this.name = name;
+
+    this._on = false;
+    this._addr = 0;
   }
+
+  get on(){
+    return this._on;
+  }
+
+  set on(v){
+    this._on = !!v;
+  }
+
+  turnOn(){
+    this._on = true;
+  }
+
+  turnOff(){
+    this._on = false;
+  }
+
+  relayOn(){
+    SYS_relay.setChannel(this._addr, this.channel, 1);
+  }
+
+  relayOff(){
+    SYS_relay.setChannel(this._addr, this.channel, 0);
+  }
+}
+
+const HVAC = object.freeze({
+  heat: new HVAC_method(SYS_relay, 0, 'heat'),
+  cool: new HVAC_method(SYS_relay, 1, 'cool')
 });
 
-//vs
-class HVAC {
-//  turnOn
-}
-class _SYSTEM {
 
-}
 
 //TODO: need safety check in case this script keeps rebooting
 //maybe force a two minute wait on boot, or, track on/off in file or
