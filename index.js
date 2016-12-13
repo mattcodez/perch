@@ -8,12 +8,11 @@ const fs = Promise.promisifyAll(require('fs'));
 //Custom modules
 const config = require('./config.js');
 const SYS_relay = require('./relay.js');
+const API = require('./api.js');
 
 //HVAC_method: for controlling relays on individual modes
 class HVAC_method {
   constructor(SYS_relay, channel, name){
-    super();
-
     if (!SYS_relay) throw 'relay must be sent to constructor';
 
     this._channel = channel;
@@ -49,13 +48,14 @@ class HVAC_method {
 }
 
 const HVAC = {
-  heat:         new HVAC_method(SYS_relay, 0, 'heat'),
-  cool:         new HVAC_method(SYS_relay, 1, 'cool'),
-  active_mode:  'heat',
-  tempTarget:   21
+  heat:            new HVAC_method(SYS_relay, 0, 'heat'),
+  cool:            new HVAC_method(SYS_relay, 1, 'cool'),
+  active_mode:     'heat',
+  tempTarget:      21,
+  currentTempRead: null
 };
 
-
+const web_api = new API({HVAC});
 
 //TODO: need safety check in case this script keeps rebooting
 //maybe force a two minute wait on boot, or, track on/off in file or
@@ -64,13 +64,10 @@ const HVAC = {
 
 //TODO: everything below could probably go in HVAC at some point
 
-let currentTempRead;  //Global to hold the current termperature read from
-                      //the device file
-
 function getAndSetTemperature(){
   fs.readFileAsync(config.thermometerFilePath, 'utf8').then(content => {
-    currentTempRead = content.substr(content.lastIndexOf('t=') + 2) / 1000;
-    DEBUG_MODE && console.log(`currentTempRead set to ${currentTempRead}`);
+    HVAC.currentTempRead = content.substr(content.lastIndexOf('t=') + 2) / 1000;
+    DEBUG_MODE && console.log(`currentTempRead set to ${HVAC.currentTempRead}`);
   }).catch(err => {
     console.error("Error reading thermometer file path");
     DEBUG_MODE && console.error(err);
@@ -87,7 +84,7 @@ function monitorTempForAction(){
   if (HVAC.active_mode === 'heat'){
     /*We divide cycleTempChange by 2 because we let the temp fall half that from
     the target and then raise it fully so that we're half above the target*/
-    const currentTempDiff = currentTempRead - HVAC.tempTarget;
+    const currentTempDiff = HVAC.currentTempRead - HVAC.tempTarget;
     //currentTempDiff is positive the room is warmer than the target
     if (currentTempDiff > THERMAL_THRESHOLD){
       //if we're warmer by the threshold, time to turn off
