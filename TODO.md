@@ -1,3 +1,5 @@
+#12-12-16:
+*Probably want to do some testing soon too.
 #12-10-16:
 *So, based on below, probably work on API before web GUI
 *Move things to other files before it get's too messy
