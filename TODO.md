@@ -1,4 +1,6 @@
 #12-12-16:
+LO:
+*Get a POST system working for API
 *Probably want to do some testing soon too.
 #12-10-16:
 *So, based on below, probably work on API before web GUI
