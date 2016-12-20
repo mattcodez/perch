@@ -19,6 +19,13 @@ module.exports = class API {
       currentTempRead: this.HVAC.currentTempRead,
       tempTarget:      this.HVAC.tempTarget
     }));
+
+    this.app.post('/current_HVAC/tempTarget?set=:set', (req, res) => {
+      req.params['set']
+      try {
+        HVAC.set_tempTarget()
+      }
+    });
   }
 
   startServer(){

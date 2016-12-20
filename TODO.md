@@ -1,3 +1,7 @@
+#12-20-16:
+LO: POST method for setting tempTaret
+*What are we going to change with the POST system?
+  Obviously the tempTarget for now
 #12-12-16:
 LO:
 *Get a POST system working for API

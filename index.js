@@ -51,9 +51,17 @@ const HVAC = {
   heat:            new HVAC_method(SYS_relay, 0, 'heat'),
   cool:            new HVAC_method(SYS_relay, 1, 'cool'),
   active_mode:     'heat',
-  tempTarget:      21,
-  currentTempRead: null
+  _tempTarget:     null,
+  currentTempRead: null,
+
+  set_tempTarget(v){
+    this._tempTarget = v;
+  },
+  get tempTarget(){
+    return this._tempTarget;
+  }
 };
+HVAC.set_tempTarget(21);
 
 const web_api = new API({HVAC});
 
