@@ -1,3 +1,7 @@
+#12-26-16:
+LO: POSTMAN cant' POST to the tempTaret route
+  *Setup debugging in express with DEBUG=express:*
+  *And use nodemon.json to configure it
 #12-20-16:
 LO: POST method for setting tempTaret
 *What are we going to change with the POST system?

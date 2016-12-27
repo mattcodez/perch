@@ -15,17 +15,27 @@ module.exports = class API {
       res.send('Hello World!')
     });
 
-    this.app.get('/current_HVAC', (req, res) => res.json({
-      currentTempRead: this.HVAC.currentTempRead,
-      tempTarget:      this.HVAC.tempTarget
-    }));
+    this.app.get('/current_HVAC', (req, res) => res.json(this._HVACInfo()));
 
     this.app.post('/current_HVAC/tempTarget?set=:set', (req, res) => {
-      req.params['set']
+      //Force number for setting
+      const tempNumber = ~~req.params.set;
+      if (tempNumber != req.params.set){
+        return res.send(400, 'Set value must be a number');
+      }
       try {
-        HVAC.set_tempTarget()
+        this.HVAC.set_tempTarget(tempNumber);
+        res.send(this._HVACInfo());
+      }
+      catch(err){
+        return res.send(500, 'Error setting tempTaret');
       }
     });
+  }
+
+  _HVACInfo(){
+    const {currentTempRead, tempTarget} = this.HVAC;
+    return {currentTempRead, tempTarget};
   }
 
   startServer(){
